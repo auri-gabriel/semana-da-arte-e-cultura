@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Camada_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="554.707px" height="379.763px" viewBox="0 0 554.707 379.763" enable-background="new 0 0 554.707 379.763"
-	 xml:space="preserve">
-<rect x="4.216" y="6.664" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" width="546.73" height="370.902"/>
+<svg version="1.1" id="Camada_1" xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	width="554.707px" height="379.763px" viewBox="0 0 554.707 379.763"
+	enable-background="new 0 0 554.707 379.763"
+	xml:space="preserve">
+<rect x="4.216" y="6.664" fill-rule="evenodd" clip-rule="evenodd" fill="#00000000" width="546.73"
+		height="370.902" />
 <path fill="#009640" d="M209.558,100.948c1.799-3.976,2.804-8.39,2.804-13.04c0-17.485-14.176-31.658-31.661-31.658
 	s-31.661,14.173-31.661,31.658c0,4.657,1.008,9.083,2.813,13.063c-15.784,1.794-28.046,15.191-28.046,31.456
 	c0,17.485,14.172,31.661,31.661,31.661c6.809,0,13.117-2.151,18.282-5.812h14.12c5.165,3.661,11.473,5.812,18.283,5.812

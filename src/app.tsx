@@ -304,9 +304,6 @@ export function App() {
               class='brand-logo brand-logo-navbar'
               loading='eager'
             />
-            <span class='text-body-secondary small'>
-              {events.length} eventos carregados
-            </span>
           </div>
           <div class='d-flex align-items-center gap-2'>
             <label class='visually-hidden' for='theme-mode'>
