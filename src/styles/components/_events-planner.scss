@@ -19,6 +19,14 @@
   background-color: var(--bs-tertiary-bg);
 }
 
+.app-footer {
+  background-color: var(--bs-white);
+}
+
+[data-bs-theme='dark'] .app-footer {
+  background-color: var(--bs-tertiary-bg);
+}
+
 .app-navbar {
   background-color: var(--bs-white);
 }
