@@ -35,7 +35,7 @@ export function FiltersPanel({
         <h2 class='accordion-header'>
           <button
             type='button'
-            class={`accordion-button ${isOpen ? '' : 'collapsed'}`}
+            class={`accordion-button ${isOpen ? '' : 'collapsed'} bg-white`}
             onClick={() => setIsOpen((previous) => !previous)}
             aria-expanded={isOpen}
             aria-controls='filters-panel-body'

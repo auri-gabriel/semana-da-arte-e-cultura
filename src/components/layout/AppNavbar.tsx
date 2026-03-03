@@ -12,7 +12,7 @@ export function AppNavbar({
   onThemeModeChange,
 }: AppNavbarProps) {
   return (
-    <nav class='sticky-top bg-body border-bottom app-navbar'>
+    <nav class='sticky-top bg-white border-bottom app-navbar'>
       <div class='container-fluid board-layout py-2 d-flex align-items-center justify-content-between gap-2 flex-wrap'>
         <div class='d-flex align-items-center gap-3 flex-wrap'>
           <img
