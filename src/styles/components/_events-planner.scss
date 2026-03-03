@@ -145,8 +145,15 @@
   }
 
   .week-calendar {
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0.25rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
+  }
+
+  .week-calendar-day {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .week-calendar::-webkit-scrollbar {
