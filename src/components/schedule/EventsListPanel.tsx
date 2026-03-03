@@ -44,7 +44,15 @@ export function EventsListPanel({
                 >
                   <div class='fw-semibold'>{event.titulo}</div>
                   <div class='small'>
-                    {showDate && <>{event.dateRaw} · </>}
+                    {showDate && (
+                      <>
+                        <i
+                          class='bi bi-calendar-date me-1'
+                          aria-hidden='true'
+                        />
+                        {event.dateRaw} ·{' '}
+                      </>
+                    )}
                     <i class='bi bi-clock me-1' aria-hidden='true' />
                     {formatHour(event.start)}–{formatHour(event.end)} ·{' '}
                     {event.turno}
