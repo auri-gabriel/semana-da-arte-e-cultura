@@ -88,7 +88,7 @@ export function WeekCalendar({
           role='tab'
           aria-selected={selectedDay === allDaysValue}
         >
-          <span class='week-calendar-weekday'>Todos</span>
+          <span class='week-calendar-weekday'>Todos os</span>
           <span class='week-calendar-date'>dias</span>
           <span class='week-calendar-full'>Todos os dias</span>
         </button>
