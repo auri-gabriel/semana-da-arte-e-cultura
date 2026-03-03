@@ -14,6 +14,8 @@ import {
   getSystemTheme,
 } from './utils/theme.ts';
 
+const ALL_DAYS = '__all__';
+
 export function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(
@@ -71,7 +73,10 @@ export function App() {
   );
 
   const dayEvents = useMemo(
-    () => events.filter((event) => event.dateKey === selectedDay),
+    () =>
+      selectedDay === ALL_DAYS
+        ? events
+        : events.filter((event) => event.dateKey === selectedDay),
     [events, selectedDay],
   );
 
@@ -152,6 +157,7 @@ export function App() {
             days={days}
             selectedDay={selectedDay}
             onSelectDay={setSelectedDay}
+            allDaysValue={ALL_DAYS}
           />
         </div>
       </header>
