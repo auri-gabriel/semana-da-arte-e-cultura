@@ -80,19 +80,19 @@ $btn-focus-box-shadow: none;
 $btn-border-width: 1px;
 
 // === FORMS ===
-$input-bg: $gray-50;
-$input-color: $gray-900;
-$input-border-color: $gray-600;
+$input-bg: var(--bs-body-bg);
+$input-color: var(--bs-body-color);
+$input-border-color: var(--bs-border-color);
 $input-focus-border-color: $primary;
-$form-control-bg: $gray-50;
-$form-control-border-color: $gray-600;
-$form-control-color: $gray-900;
+$form-control-bg: $input-bg;
+$form-control-border-color: $input-border-color;
+$form-control-color: $input-color;
 $form-control-border-width: 0 0 1px 0;
 $form-control-focus-border-color: $primary;
 $form-control-focus-box-shadow: 0 1px 0 0 $primary;
-$form-select-border-color: $gray-600;
+$form-select-border-color: $input-border-color;
 $form-select-focus-border-color: $primary;
-$form-check-input-border: 1px solid $gray-600;
+$form-check-input-border: 1px solid $input-border-color;
 $form-check-input-focus-border: $primary;
 
 // === INPUTS ===
