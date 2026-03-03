@@ -16,6 +16,14 @@ import {
 
 const ALL_DAYS = '__all__';
 
+const withSelectedValue = (values: string[], selectedValue: string) => {
+  if (!selectedValue || values.includes(selectedValue)) {
+    return values;
+  }
+
+  return [...values, selectedValue].sort();
+};
+
 export function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(
@@ -79,29 +87,31 @@ export function App() {
     [events, selectedDay],
   );
 
-  const turnos = useMemo(
-    () =>
-      Array.from(new Set(dayEvents.map((event) => event.turno)))
-        .filter(Boolean)
-        .sort(),
-    [dayEvents],
-  );
+  const turnos = useMemo(() => {
+    const values = Array.from(new Set(dayEvents.map((event) => event.turno)))
+      .filter(Boolean)
+      .sort();
 
-  const proponentes = useMemo(
-    () =>
-      Array.from(new Set(dayEvents.map((event) => event.proponente)))
-        .filter(Boolean)
-        .sort(),
-    [dayEvents],
-  );
+    return withSelectedValue(values, turno);
+  }, [dayEvents, turno]);
 
-  const locais = useMemo(
-    () =>
-      Array.from(new Set(dayEvents.map((event) => event.local)))
-        .filter(Boolean)
-        .sort(),
-    [dayEvents],
-  );
+  const proponentes = useMemo(() => {
+    const values = Array.from(
+      new Set(dayEvents.map((event) => event.proponente)),
+    )
+      .filter(Boolean)
+      .sort();
+
+    return withSelectedValue(values, proponente);
+  }, [dayEvents, proponente]);
+
+  const locais = useMemo(() => {
+    const values = Array.from(new Set(dayEvents.map((event) => event.local)))
+      .filter(Boolean)
+      .sort();
+
+    return withSelectedValue(values, local);
+  }, [dayEvents, local]);
 
   const filteredEvents = useMemo(() => {
     return dayEvents.filter((event) => {
