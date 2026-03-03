@@ -98,6 +98,27 @@ function formatDatePt(dateKey: string): string {
   }).format(date);
 }
 
+function formatCalendarCell(dateKey: string): {
+  weekday: string;
+  dayMonth: string;
+} {
+  if (!dateKey) return { weekday: '', dayMonth: '' };
+
+  const date = new Date(`${dateKey}T00:00:00`);
+  const weekday = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' })
+    .format(date)
+    .replace('.', '');
+  const dayMonth = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+  }).format(date);
+
+  return {
+    weekday: weekday.charAt(0).toUpperCase() + weekday.slice(1),
+    dayMonth,
+  };
+}
+
 function normalize(value: string): string {
   return value
     .toLowerCase()
@@ -264,45 +285,56 @@ export function App() {
 
   return (
     <div class='app-shell'>
-      <header class='sticky-top bg-body border-bottom app-topbar'>
-        <div class='container-fluid board-layout py-2'>
-          <div class='d-flex align-items-center justify-content-between gap-2 flex-wrap'>
-            <h1 class='h5 mb-0'>Programação de Oficinas</h1>
-            <div class='d-flex align-items-center gap-2 flex-wrap'>
-              <span class='text-body-secondary small'>
-                {events.length} eventos carregados
-              </span>
-              <label class='visually-hidden' for='theme-mode'>
-                Tema
-              </label>
-              <select
-                id='theme-mode'
-                class='form-select form-select-sm theme-select'
-                value={themeMode}
-                onChange={(event) =>
-                  setThemeMode(
-                    (event.target as HTMLSelectElement).value as ThemeMode,
-                  )
-                }
-              >
-                <option value='auto'>Tema: Automático</option>
-                <option value='light'>Tema: Claro</option>
-                <option value='dark'>Tema: Escuro</option>
-              </select>
-            </div>
+      <nav class='sticky-top bg-body border-bottom app-navbar'>
+        <div class='container-fluid board-layout py-2 d-flex align-items-center justify-content-between gap-2 flex-wrap'>
+          <span class='text-body-secondary small'>
+            {events.length} eventos carregados
+          </span>
+          <div class='d-flex align-items-center gap-2'>
+            <label class='visually-hidden' for='theme-mode'>
+              Tema
+            </label>
+            <select
+              id='theme-mode'
+              class='form-select form-select-sm theme-select'
+              value={themeMode}
+              onChange={(event) =>
+                setThemeMode(
+                  (event.target as HTMLSelectElement).value as ThemeMode,
+                )
+              }
+            >
+              <option value='auto'>Tema: Automático</option>
+              <option value='light'>Tema: Claro</option>
+              <option value='dark'>Tema: Escuro</option>
+            </select>
           </div>
+        </div>
+      </nav>
 
-          <div class='calendar-strip mt-2'>
-            {days.map((day) => (
-              <button
-                type='button'
-                key={day}
-                class={`btn btn-sm me-2 mb-2 ${selectedDay === day ? 'btn-primary' : 'btn-outline-secondary'}`}
-                onClick={() => setSelectedDay(day)}
-              >
-                {formatDatePt(day)}
-              </button>
-            ))}
+      <header class='bg-body border-bottom app-header'>
+        <div class='container-fluid board-layout py-3'>
+          <h1 class='h5 mb-3'>Programação de Oficinas</h1>
+
+          <div class='week-calendar' role='tablist' aria-label='Seleção de dia'>
+            {days.map((day) => {
+              const { weekday, dayMonth } = formatCalendarCell(day);
+
+              return (
+                <button
+                  type='button'
+                  key={day}
+                  class={`week-calendar-day ${selectedDay === day ? 'is-active' : ''}`}
+                  onClick={() => setSelectedDay(day)}
+                  role='tab'
+                  aria-selected={selectedDay === day}
+                >
+                  <span class='week-calendar-weekday'>{weekday}</span>
+                  <span class='week-calendar-date'>{dayMonth}</span>
+                  <span class='week-calendar-full'>{formatDatePt(day)}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </header>
