@@ -44,7 +44,7 @@ export function EventDetailsPanel({ event }: EventDetailsPanelProps) {
             <strong>Proponente:</strong> {event.proponente}
           </div>
           <a
-            class='btn btn-sm btn-outline-primary mt-2 d-inline-flex align-items-center gap-1'
+            class='btn btn-primary text-white mt-2 px-3 py-2 d-inline-flex align-items-center gap-1'
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`}
             target='_blank'
             rel='noreferrer'
