@@ -1,43 +1,400 @@
-import { useState } from 'preact/hooks'
-import preactLogo from './assets/preact.svg'
-import viteLogo from '/vite.svg'
-import './app.css'
+import { useEffect, useMemo, useState } from 'preact/hooks';
+
+type EventItem = {
+  id: string;
+  dateRaw: string;
+  dateKey: string;
+  turno: string;
+  start: string;
+  end: string;
+  local: string;
+  proponente: string;
+  titulo: string;
+};
+
+function parseCsv(input: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < input.length; i += 1) {
+    const char = input[i];
+    const next = input[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && next === '"') {
+        field += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (char === ',' && !inQuotes) {
+      row.push(field);
+      field = '';
+      continue;
+    }
+
+    if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && next === '\n') i += 1;
+      row.push(field);
+      if (row.some((cell) => cell.trim() !== '')) rows.push(row);
+      row = [];
+      field = '';
+      continue;
+    }
+
+    field += char;
+  }
+
+  row.push(field);
+  if (row.some((cell) => cell.trim() !== '')) rows.push(row);
+
+  return rows;
+}
+
+function toDateKey(dateBr: string): string {
+  const [dd = '', mm = '', yyyy = ''] = dateBr.split('/');
+  if (!dd || !mm || !yyyy) return '';
+  return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
+}
+
+function formatDatePt(dateKey: string): string {
+  if (!dateKey) return '';
+  const date = new Date(`${dateKey}T00:00:00`);
+  return new Intl.DateTimeFormat('pt-BR', {
+    weekday: 'short',
+    day: '2-digit',
+    month: '2-digit',
+  }).format(date);
+}
+
+function normalize(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .trim();
+}
+
+function formatHour(value: string): string {
+  return value?.slice(0, 5) ?? '';
+}
 
 export function App() {
-  const [count, setCount] = useState(0)
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [selectedDay, setSelectedDay] = useState('');
+  const [selectedEventId, setSelectedEventId] = useState('');
+  const [search, setSearch] = useState('');
+  const [turno, setTurno] = useState('');
+  const [proponente, setProponente] = useState('');
+  const [local, setLocal] = useState('');
+
+  useEffect(() => {
+    const load = async () => {
+      const url = `${import.meta.env.BASE_URL}Programação-Oficinas.csv`;
+      const text = await fetch(url).then((response) => response.text());
+      const rows = parseCsv(text);
+      const [headers, ...body] = rows;
+
+      const index = new Map(headers.map((header, i) => [header.trim(), i]));
+      const get = (record: string[], col: string) =>
+        record[index.get(col) ?? -1]?.trim() ?? '';
+
+      const parsed = body
+        .map((record, i) => {
+          const dateRaw = get(record, 'Data');
+          const dateKey = toDateKey(dateRaw);
+
+          return {
+            id: `evt-${i}`,
+            dateRaw,
+            dateKey,
+            turno: get(record, 'Turno'),
+            start: get(record, 'Início'),
+            end: get(record, 'Fim'),
+            local: get(record, 'Local'),
+            proponente: get(record, 'Proponente'),
+            titulo: get(record, 'Título'),
+          } satisfies EventItem;
+        })
+        .filter((event) => event.dateKey)
+        .sort((a, b) => {
+          const byDate = a.dateKey.localeCompare(b.dateKey);
+          if (byDate !== 0) return byDate;
+
+          const byStart = a.start.localeCompare(b.start);
+          if (byStart !== 0) return byStart;
+
+          return a.titulo.localeCompare(b.titulo);
+        });
+
+      setEvents(parsed);
+      if (parsed.length > 0) setSelectedDay(parsed[0].dateKey);
+    };
+
+    load().catch((error) => {
+      console.error('Erro ao carregar CSV de oficinas:', error);
+      setEvents([]);
+    });
+  }, []);
+
+  const days = useMemo(
+    () => Array.from(new Set(events.map((event) => event.dateKey))).sort(),
+    [events],
+  );
+
+  const dayEvents = useMemo(
+    () => events.filter((event) => event.dateKey === selectedDay),
+    [events, selectedDay],
+  );
+
+  const turnos = useMemo(
+    () =>
+      Array.from(new Set(dayEvents.map((event) => event.turno)))
+        .filter(Boolean)
+        .sort(),
+    [dayEvents],
+  );
+
+  const proponentes = useMemo(
+    () =>
+      Array.from(new Set(dayEvents.map((event) => event.proponente)))
+        .filter(Boolean)
+        .sort(),
+    [dayEvents],
+  );
+
+  const locais = useMemo(
+    () =>
+      Array.from(new Set(dayEvents.map((event) => event.local)))
+        .filter(Boolean)
+        .sort(),
+    [dayEvents],
+  );
+
+  const filteredEvents = useMemo(() => {
+    const normalizedSearch = normalize(search);
+    return dayEvents.filter((event) => {
+      const matchesSearch =
+        !normalizedSearch ||
+        normalize(event.titulo).includes(normalizedSearch) ||
+        normalize(event.proponente).includes(normalizedSearch) ||
+        normalize(event.local).includes(normalizedSearch);
+
+      const matchesTurno = !turno || event.turno === turno;
+      const matchesProponente = !proponente || event.proponente === proponente;
+      const matchesLocal = !local || event.local === local;
+
+      return matchesSearch && matchesTurno && matchesProponente && matchesLocal;
+    });
+  }, [dayEvents, search, turno, proponente, local]);
+
+  useEffect(() => {
+    if (!filteredEvents.some((event) => event.id === selectedEventId)) {
+      setSelectedEventId(filteredEvents[0]?.id ?? '');
+    }
+  }, [filteredEvents, selectedEventId]);
+
+  const selectedEvent =
+    filteredEvents.find((event) => event.id === selectedEventId) ??
+    filteredEvents[0];
+
+  const mapQuery = selectedEvent?.local
+    ? `${selectedEvent.local}, Alegrete, RS, Brasil`
+    : 'Alegrete, RS, Brasil';
+  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://preactjs.com" target="_blank">
-          <img src={preactLogo} class="logo preact" alt="Preact logo" />
-        </a>
-      </div>
-      <h1>Vite + Preact</h1>
-      <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/app.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p>
-        Check out{' '}
-        <a
-          href="https://preactjs.com/guide/v10/getting-started#create-a-vite-powered-preact-app"
-          target="_blank"
-        >
-          create-preact
-        </a>
-        , the official Preact + Vite starter
-      </p>
-      <p class="read-the-docs">
-        Click on the Vite and Preact logos to learn more
-      </p>
-    </>
-  )
+    <div class='app-shell'>
+      <header class='sticky-top bg-body border-bottom app-topbar'>
+        <div class='container-fluid board-layout py-2'>
+          <div class='d-flex align-items-center justify-content-between gap-2 flex-wrap'>
+            <h1 class='h5 mb-0'>Programação de Oficinas</h1>
+            <span class='text-body-secondary small'>
+              {events.length} eventos carregados
+            </span>
+          </div>
+
+          <div class='calendar-strip mt-2'>
+            {days.map((day) => (
+              <button
+                type='button'
+                key={day}
+                class={`btn btn-sm me-2 mb-2 ${selectedDay === day ? 'btn-primary' : 'btn-outline-secondary'}`}
+                onClick={() => setSelectedDay(day)}
+              >
+                {formatDatePt(day)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <main class='container-fluid board-layout py-3'>
+        <div class='row g-3'>
+          <aside class='col-12 col-xl-4'>
+            <section class='board-panel mb-3'>
+              <h2 class='h6 mb-3'>Filtros</h2>
+              <div class='row g-2'>
+                <div class='col-12'>
+                  <label class='form-label'>Busca</label>
+                  <input
+                    class='form-control'
+                    placeholder='Título, local ou proponente'
+                    value={search}
+                    onInput={(event) =>
+                      setSearch((event.target as HTMLInputElement).value)
+                    }
+                  />
+                </div>
+
+                <div class='col-12 col-md-4 col-xl-12'>
+                  <label class='form-label'>Turno</label>
+                  <select
+                    class='form-select'
+                    value={turno}
+                    onChange={(event) =>
+                      setTurno((event.target as HTMLSelectElement).value)
+                    }
+                  >
+                    <option value=''>Todos</option>
+                    {turnos.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div class='col-12 col-md-8 col-xl-12'>
+                  <label class='form-label'>Proponente</label>
+                  <select
+                    class='form-select'
+                    value={proponente}
+                    onChange={(event) =>
+                      setProponente((event.target as HTMLSelectElement).value)
+                    }
+                  >
+                    <option value=''>Todos</option>
+                    {proponentes.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div class='col-12'>
+                  <label class='form-label'>Local</label>
+                  <select
+                    class='form-select'
+                    value={local}
+                    onChange={(event) =>
+                      setLocal((event.target as HTMLSelectElement).value)
+                    }
+                  >
+                    <option value=''>Todos</option>
+                    {locais.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <section class='board-panel'>
+              <div class='d-flex justify-content-between align-items-center mb-2'>
+                <h2 class='h6 mb-0'>Eventos do dia</h2>
+                <span class='badge text-bg-secondary'>
+                  {filteredEvents.length}
+                </span>
+              </div>
+
+              <div class='events-list'>
+                {filteredEvents.length === 0 ? (
+                  <p class='text-body-secondary small mb-0'>
+                    Nenhum evento com os filtros atuais.
+                  </p>
+                ) : (
+                  <div class='list-group'>
+                    {filteredEvents.map((event) => {
+                      const isSelected = selectedEvent?.id === event.id;
+
+                      return (
+                        <button
+                          key={event.id}
+                          type='button'
+                          class={`list-group-item list-group-item-action ${isSelected ? 'active' : ''}`}
+                          onClick={() => setSelectedEventId(event.id)}
+                        >
+                          <div class='fw-semibold'>{event.titulo}</div>
+                          <div class='small'>
+                            {formatHour(event.start)}–{formatHour(event.end)} ·{' '}
+                            {event.turno}
+                          </div>
+                          <div class='small text-truncate'>
+                            {event.local || 'Local a definir'}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </section>
+          </aside>
+
+          <section class='col-12 col-xl-8'>
+            <div class='board-panel h-100 d-flex flex-column gap-3'>
+              <div>
+                <h2 class='h5 mb-1'>
+                  {selectedEvent?.titulo ?? 'Selecione um evento'}
+                </h2>
+                {selectedEvent && (
+                  <p class='mb-0 text-body-secondary'>
+                    {selectedEvent.dateRaw} · {formatHour(selectedEvent.start)}–
+                    {formatHour(selectedEvent.end)} · {selectedEvent.turno}
+                  </p>
+                )}
+              </div>
+
+              <div class='ratio ratio-16x9 border'>
+                <iframe
+                  title='Mapa do evento'
+                  src={mapSrc}
+                  loading='lazy'
+                  referrerPolicy='no-referrer-when-downgrade'
+                />
+              </div>
+
+              {selectedEvent && (
+                <div class='small'>
+                  <div>
+                    <strong>Local:</strong> {selectedEvent.local || 'A definir'}
+                  </div>
+                  <div>
+                    <strong>Proponente:</strong> {selectedEvent.proponente}
+                  </div>
+                  <a
+                    class='btn btn-sm btn-outline-primary mt-2'
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    Abrir no mapa
+                  </a>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
 }

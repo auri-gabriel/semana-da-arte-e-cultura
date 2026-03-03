@@ -1,0 +1,16 @@
+.calendar-strip {
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.events-list {
+  max-height: calc(100vh - 20rem);
+  overflow: auto;
+}
+
+@media (max-width: 1199.98px) {
+  .events-list {
+    max-height: 40vh;
+  }
+}
