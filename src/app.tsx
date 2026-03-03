@@ -12,6 +12,32 @@ type EventItem = {
   titulo: string;
 };
 
+type ThemeMode = 'auto' | 'light' | 'dark';
+
+const THEME_STORAGE_KEY = 'unipampa-theme-mode';
+
+function isThemeMode(value: string | null): value is ThemeMode {
+  return value === 'auto' || value === 'light' || value === 'dark';
+}
+
+function getSystemTheme(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+}
+
+function getInitialThemeMode(): ThemeMode {
+  if (typeof window === 'undefined') return 'auto';
+
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return isThemeMode(stored) ? stored : 'auto';
+  } catch {
+    return 'auto';
+  }
+}
+
 function parseCsv(input: string): string[][] {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -85,6 +111,10 @@ function formatHour(value: string): string {
 }
 
 export function App() {
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
+  const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(
+    getSystemTheme,
+  );
   const [events, setEvents] = useState<EventItem[]>([]);
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedEventId, setSelectedEventId] = useState('');
@@ -92,6 +122,30 @@ export function App() {
   const [turno, setTurno] = useState('');
   const [proponente, setProponente] = useState('');
   const [local, setLocal] = useState('');
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onSystemThemeChange = (event: MediaQueryListEvent) => {
+      setSystemTheme(event.matches ? 'dark' : 'light');
+    };
+
+    media.addEventListener('change', onSystemThemeChange);
+    return () => {
+      media.removeEventListener('change', onSystemThemeChange);
+    };
+  }, []);
+
+  const effectiveTheme = themeMode === 'auto' ? systemTheme : themeMode;
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-bs-theme', effectiveTheme);
+  }, [effectiveTheme]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+    } catch {}
+  }, [themeMode]);
 
   useEffect(() => {
     const load = async () => {
@@ -214,9 +268,28 @@ export function App() {
         <div class='container-fluid board-layout py-2'>
           <div class='d-flex align-items-center justify-content-between gap-2 flex-wrap'>
             <h1 class='h5 mb-0'>Programação de Oficinas</h1>
-            <span class='text-body-secondary small'>
-              {events.length} eventos carregados
-            </span>
+            <div class='d-flex align-items-center gap-2 flex-wrap'>
+              <span class='text-body-secondary small'>
+                {events.length} eventos carregados
+              </span>
+              <label class='visually-hidden' for='theme-mode'>
+                Tema
+              </label>
+              <select
+                id='theme-mode'
+                class='form-select form-select-sm theme-select'
+                value={themeMode}
+                onChange={(event) =>
+                  setThemeMode(
+                    (event.target as HTMLSelectElement).value as ThemeMode,
+                  )
+                }
+              >
+                <option value='auto'>Tema: Automático</option>
+                <option value='light'>Tema: Claro</option>
+                <option value='dark'>Tema: Escuro</option>
+              </select>
+            </div>
           </div>
 
           <div class='calendar-strip mt-2'>
