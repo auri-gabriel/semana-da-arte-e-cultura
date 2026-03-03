@@ -7,7 +7,7 @@ export function AppFooter({ footerLogoSrc }: AppFooterProps) {
     <footer class='border-top bg-body-tertiary app-footer'>
       <div class='container-fluid board-layout py-3 d-flex flex-wrap align-items-center justify-content-between gap-2'>
         <span class='small text-body-secondary'>
-          Semana da Arte e Cultura · UNIPAMPA
+          II Semana de Arte e Cultura de Alegrete · UNIPAMPA
         </span>
         <img
           src={footerLogoSrc}

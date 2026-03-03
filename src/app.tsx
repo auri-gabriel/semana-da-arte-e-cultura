@@ -146,7 +146,8 @@ export function App() {
 
       <header class='bg-body border-bottom app-header'>
         <div class='container-fluid board-layout py-3'>
-          <h1 class='h5 mb-3'>Programação de Oficinas</h1>
+          <h1 class='h5 mb-1'>II Semana de Arte e Cultura de Alegrete</h1>
+          <p class='text-body-secondary mb-3'>Programação de Oficinas</p>
           <WeekCalendar
             days={days}
             selectedDay={selectedDay}
