@@ -40,6 +40,7 @@ export function FiltersPanel({
             aria-expanded={isOpen}
             aria-controls='filters-panel-body'
           >
+            <i class='bi bi-funnel me-2' aria-hidden='true' />
             Filtros
           </button>
         </h2>
@@ -51,7 +52,10 @@ export function FiltersPanel({
           <div class='accordion-body'>
             <div class='row g-2'>
               <div class='col-12'>
-                <label class='form-label'>Busca</label>
+                <label class='form-label'>
+                  <i class='bi bi-search me-1' aria-hidden='true' />
+                  Busca
+                </label>
                 <input
                   class='form-control'
                   placeholder='Título, local ou proponente'
@@ -63,7 +67,10 @@ export function FiltersPanel({
               </div>
 
               <div class='col-12 col-md-4 col-xl-12'>
-                <label class='form-label'>Turno</label>
+                <label class='form-label'>
+                  <i class='bi bi-clock me-1' aria-hidden='true' />
+                  Turno
+                </label>
                 <select
                   class='form-select'
                   value={turno}
@@ -81,7 +88,10 @@ export function FiltersPanel({
               </div>
 
               <div class='col-12 col-md-8 col-xl-12'>
-                <label class='form-label'>Proponente</label>
+                <label class='form-label'>
+                  <i class='bi bi-person-badge me-1' aria-hidden='true' />
+                  Proponente
+                </label>
                 <select
                   class='form-select'
                   value={proponente}
@@ -101,7 +111,10 @@ export function FiltersPanel({
               </div>
 
               <div class='col-12'>
-                <label class='form-label'>Local</label>
+                <label class='form-label'>
+                  <i class='bi bi-geo-alt me-1' aria-hidden='true' />
+                  Local
+                </label>
                 <select
                   class='form-select'
                   value={local}
