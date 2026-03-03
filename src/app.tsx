@@ -7,7 +7,7 @@ import { FiltersPanel } from './components/schedule/FiltersPanel.tsx';
 import { WeekCalendar } from './components/schedule/WeekCalendar.tsx';
 import type { EventItem } from './types/event.ts';
 import type { ThemeMode } from './types/theme.ts';
-import { loadEvents, normalize } from './utils/events.ts';
+import { loadEvents, matchesFuzzySearch } from './utils/events.ts';
 import {
   THEME_STORAGE_KEY,
   getInitialThemeMode,
@@ -105,13 +105,13 @@ export function App() {
   );
 
   const filteredEvents = useMemo(() => {
-    const normalizedSearch = normalize(search);
     return dayEvents.filter((event) => {
-      const matchesSearch =
-        !normalizedSearch ||
-        normalize(event.titulo).includes(normalizedSearch) ||
-        normalize(event.proponente).includes(normalizedSearch) ||
-        normalize(event.local).includes(normalizedSearch);
+      const matchesSearch = matchesFuzzySearch(
+        search,
+        event.titulo,
+        event.proponente,
+        event.local,
+      );
 
       const matchesTurno = !turno || event.turno === turno;
       const matchesProponente = !proponente || event.proponente === proponente;

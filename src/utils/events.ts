@@ -89,6 +89,77 @@ export function normalize(value: string): string {
     .trim();
 }
 
+function isSubsequence(needle: string, haystack: string): boolean {
+  if (!needle) return true;
+
+  let index = 0;
+  for (const char of haystack) {
+    if (char === needle[index]) index += 1;
+    if (index === needle.length) return true;
+  }
+
+  return false;
+}
+
+function levenshteinDistance(a: string, b: string): number {
+  if (a === b) return 0;
+  if (!a) return b.length;
+  if (!b) return a.length;
+
+  const previous = new Array<number>(b.length + 1);
+  const current = new Array<number>(b.length + 1);
+
+  for (let j = 0; j <= b.length; j += 1) previous[j] = j;
+
+  for (let i = 1; i <= a.length; i += 1) {
+    current[0] = i;
+
+    for (let j = 1; j <= b.length; j += 1) {
+      const substitutionCost = a[i - 1] === b[j - 1] ? 0 : 1;
+
+      current[j] = Math.min(
+        previous[j] + 1,
+        current[j - 1] + 1,
+        previous[j - 1] + substitutionCost,
+      );
+    }
+
+    for (let j = 0; j <= b.length; j += 1) previous[j] = current[j];
+  }
+
+  return previous[b.length];
+}
+
+function fuzzyMatchToken(token: string, value: string): boolean {
+  if (!token) return true;
+  if (!value) return false;
+  if (value.includes(token)) return true;
+  if (isSubsequence(token, value)) return true;
+
+  const words = value.split(/\s+/).filter(Boolean);
+  const maxDistance = token.length <= 4 ? 1 : 2;
+
+  return words.some((word) => {
+    if (Math.abs(word.length - token.length) > maxDistance) return false;
+    return levenshteinDistance(token, word) <= maxDistance;
+  });
+}
+
+export function matchesFuzzySearch(
+  query: string,
+  ...fields: string[]
+): boolean {
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery) return true;
+
+  const values = fields.map((field) => normalize(field));
+  const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+
+  return tokens.every((token) =>
+    values.some((value) => fuzzyMatchToken(token, value)),
+  );
+}
+
 export function formatHour(value: string): string {
   return value?.slice(0, 5) ?? '';
 }
