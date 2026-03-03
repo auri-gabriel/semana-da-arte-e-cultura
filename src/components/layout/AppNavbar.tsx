@@ -23,6 +23,7 @@ export function AppNavbar({
           />
         </div>
         <div class='d-flex align-items-center gap-2'>
+          <i class='bi bi-circle-half' aria-hidden='true' />
           <label class='visually-hidden' for='theme-mode'>
             Tema
           </label>
