@@ -4,12 +4,14 @@ import { formatHour } from '../../utils/events.ts';
 type EventsListPanelProps = {
   events: EventItem[];
   selectedEventId: string;
+  showDate: boolean;
   onSelectEvent: (eventId: string) => void;
 };
 
 export function EventsListPanel({
   events,
   selectedEventId,
+  showDate,
   onSelectEvent,
 }: EventsListPanelProps) {
   return (
@@ -38,6 +40,7 @@ export function EventsListPanel({
                 >
                   <div class='fw-semibold'>{event.titulo}</div>
                   <div class='small'>
+                    {showDate && <>{event.dateRaw} · </>}
                     {formatHour(event.start)}–{formatHour(event.end)} ·{' '}
                     {event.turno}
                   </div>

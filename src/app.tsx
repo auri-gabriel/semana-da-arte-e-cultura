@@ -181,6 +181,7 @@ export function App() {
             <EventsListPanel
               events={filteredEvents}
               selectedEventId={selectedEvent?.id ?? ''}
+              showDate={selectedDay === ALL_DAYS}
               onSelectEvent={setSelectedEventId}
             />
           </aside>
