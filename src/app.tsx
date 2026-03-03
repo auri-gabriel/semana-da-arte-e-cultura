@@ -282,14 +282,32 @@ export function App() {
     ? `${selectedEvent.local}, Alegrete, RS, Brasil`
     : 'Alegrete, RS, Brasil';
   const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  const navbarLogoFile =
+    effectiveTheme === 'dark'
+      ? 'RGB__SVG_assinat_horizontal_cor_NEGATIVO.svg'
+      : 'RGB__SVG_assinat_horizontal_cor.svg';
+  const footerLogoFile =
+    effectiveTheme === 'dark'
+      ? 'RGB__SVG_assinat_vertical_cor_NEGATIVO.svg'
+      : 'RGB__SVG_assinat_vertical_cor.svg';
+  const navbarLogoSrc = `${import.meta.env.BASE_URL}logos/${navbarLogoFile}`;
+  const footerLogoSrc = `${import.meta.env.BASE_URL}logos/${footerLogoFile}`;
 
   return (
     <div class='app-shell'>
       <nav class='sticky-top bg-body border-bottom app-navbar'>
         <div class='container-fluid board-layout py-2 d-flex align-items-center justify-content-between gap-2 flex-wrap'>
-          <span class='text-body-secondary small'>
-            {events.length} eventos carregados
-          </span>
+          <div class='d-flex align-items-center gap-3 flex-wrap'>
+            <img
+              src={navbarLogoSrc}
+              alt='UNIPAMPA'
+              class='brand-logo brand-logo-navbar'
+              loading='eager'
+            />
+            <span class='text-body-secondary small'>
+              {events.length} eventos carregados
+            </span>
+          </div>
           <div class='d-flex align-items-center gap-2'>
             <label class='visually-hidden' for='theme-mode'>
               Tema
@@ -500,6 +518,20 @@ export function App() {
           </section>
         </div>
       </main>
+
+      <footer class='border-top bg-body-tertiary app-footer'>
+        <div class='container-fluid board-layout py-3 d-flex flex-wrap align-items-center justify-content-between gap-2'>
+          <span class='small text-body-secondary'>
+            Semana da Arte e Cultura · UNIPAMPA
+          </span>
+          <img
+            src={footerLogoSrc}
+            alt='UNIPAMPA'
+            class='brand-logo brand-logo-footer'
+            loading='lazy'
+          />
+        </div>
+      </footer>
     </div>
   );
 }
