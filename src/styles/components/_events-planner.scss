@@ -19,6 +19,14 @@
   background-color: var(--bs-tertiary-bg);
 }
 
+.app-navbar {
+  background-color: var(--bs-white);
+}
+
+[data-bs-theme='dark'] .app-navbar {
+  background-color: var(--bs-tertiary-bg);
+}
+
 .theme-select {
   min-width: 11rem;
 }
