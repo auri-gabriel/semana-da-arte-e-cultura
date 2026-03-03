@@ -22,7 +22,7 @@ export function App() {
     getSystemTheme,
   );
   const [events, setEvents] = useState<EventItem[]>([]);
-  const [selectedDay, setSelectedDay] = useState('');
+  const [selectedDay, setSelectedDay] = useState(ALL_DAYS);
   const [selectedEventId, setSelectedEventId] = useState('');
   const [search, setSearch] = useState('');
   const [turno, setTurno] = useState('');
@@ -58,7 +58,6 @@ export function App() {
       const parsed = await loadEvents(import.meta.env.BASE_URL);
 
       setEvents(parsed);
-      if (parsed.length > 0) setSelectedDay(parsed[0].dateKey);
     };
 
     load().catch((error) => {
