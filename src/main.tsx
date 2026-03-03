@@ -1,4 +1,5 @@
 import { render } from 'preact';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import './styles/main.scss';
 import { App } from './app.tsx';
 
