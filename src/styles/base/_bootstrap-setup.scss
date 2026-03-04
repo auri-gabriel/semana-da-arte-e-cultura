@@ -12,7 +12,7 @@
 // 4. Include any default map overrides here
 $custom-spacers: ();
 $spacers: map-merge($spacers, $custom-spacers);
-$font-family-base: 'Inter', sans-serif;
+$font-family-base: 'Source Sans 3', 'Source Sans Pro', 'Segoe UI', sans-serif;
 
 // 5. Include remainder of required parts
 @import 'bootstrap/scss/maps';
