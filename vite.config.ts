@@ -5,7 +5,7 @@ const repoName = 'semana-da-arte-e-cultura';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/semana-da-arte-e-cultura/',
+  base: mode === 'production' ? `/${repoName}/` : '/',
   plugins: [preact()],
   build: {
     outDir: 'dist',
