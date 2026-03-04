@@ -46,10 +46,7 @@ export function EventsListPanel({
                   <div class='small'>
                     {showDate && (
                       <>
-                        <i
-                          class='bi bi-calendar-date me-1'
-                          aria-hidden='true'
-                        />
+                        <i class='bi bi-calendar me-1' aria-hidden='true' />
                         {event.dateRaw} ·{' '}
                       </>
                     )}
