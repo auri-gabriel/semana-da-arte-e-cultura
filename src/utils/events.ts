@@ -194,6 +194,7 @@ export async function loadEvents(remoteUrl: string): Promise<EventItem[]> {
         dateRaw,
         dateKey,
         turno: get(record, 'Turno'),
+        modalidade: get(record, 'Modalidade'),
         start: get(record, 'Início'),
         end: get(record, 'Fim'),
         local: get(record, 'Local'),

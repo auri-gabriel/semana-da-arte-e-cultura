@@ -24,6 +24,7 @@ export function App() {
   const [selectedEventId, setSelectedEventId] = useState('');
   const [search, setSearch] = useState('');
   const [turno, setTurno] = useState('');
+  const [modalidade, setModalidade] = useState('');
   const [proponente, setProponente] = useState('');
   const [local, setLocal] = useState('');
 
@@ -61,6 +62,16 @@ export function App() {
     return withSelectedValue(values, turno);
   }, [dayEvents, turno]);
 
+  const modalidades = useMemo(() => {
+    const values = Array.from(
+      new Set(dayEvents.map((event) => event.modalidade)),
+    )
+      .filter(Boolean)
+      .sort();
+
+    return withSelectedValue(values, modalidade);
+  }, [dayEvents, modalidade]);
+
   const proponentes = useMemo(() => {
     const values = Array.from(
       new Set(dayEvents.map((event) => event.proponente)),
@@ -84,17 +95,25 @@ export function App() {
       const matchesSearch = matchesFuzzySearch(
         search,
         event.titulo,
+        event.modalidade,
         event.proponente,
         event.local,
       );
 
       const matchesTurno = !turno || event.turno === turno;
+      const matchesModalidade = !modalidade || event.modalidade === modalidade;
       const matchesProponente = !proponente || event.proponente === proponente;
       const matchesLocal = !local || event.local === local;
 
-      return matchesSearch && matchesTurno && matchesProponente && matchesLocal;
+      return (
+        matchesSearch &&
+        matchesTurno &&
+        matchesModalidade &&
+        matchesProponente &&
+        matchesLocal
+      );
     });
-  }, [dayEvents, search, turno, proponente, local]);
+  }, [dayEvents, search, turno, modalidade, proponente, local]);
 
   useEffect(() => {
     if (!filteredEvents.some((event) => event.id === selectedEventId)) {
@@ -127,13 +146,16 @@ export function App() {
             <FiltersPanel
               search={search}
               turno={turno}
+              modalidade={modalidade}
               proponente={proponente}
               local={local}
               turnos={turnos}
+              modalidades={modalidades}
               proponentes={proponentes}
               locais={locais}
               onSearchChange={setSearch}
               onTurnoChange={setTurno}
+              onModalidadeChange={setModalidade}
               onProponenteChange={setProponente}
               onLocalChange={setLocal}
             />

@@ -1,13 +1,16 @@
 type FiltersPanelProps = {
   search: string;
   turno: string;
+  modalidade: string;
   proponente: string;
   local: string;
   turnos: string[];
+  modalidades: string[];
   proponentes: string[];
   locais: string[];
   onSearchChange: (value: string) => void;
   onTurnoChange: (value: string) => void;
+  onModalidadeChange: (value: string) => void;
   onProponenteChange: (value: string) => void;
   onLocalChange: (value: string) => void;
 };
@@ -15,13 +18,16 @@ type FiltersPanelProps = {
 export function FiltersPanel({
   search,
   turno,
+  modalidade,
   proponente,
   local,
   turnos,
+  modalidades,
   proponentes,
   locais,
   onSearchChange,
   onTurnoChange,
+  onModalidadeChange,
   onProponenteChange,
   onLocalChange,
 }: FiltersPanelProps) {
@@ -40,7 +46,7 @@ export function FiltersPanel({
           </label>
           <input
             class='form-control'
-            placeholder='Título, local ou proponente'
+            placeholder='Título, modalidade, local ou proponente'
             value={search}
             onInput={(event) =>
               onSearchChange((event.target as HTMLInputElement).value)
@@ -62,6 +68,27 @@ export function FiltersPanel({
           >
             <option value=''>Todos</option>
             {turnos.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class='col-12 col-md-8 col-xl-12'>
+          <label class='form-label'>
+            <i class='bi bi-tags me-1' aria-hidden='true' />
+            Modalidade
+          </label>
+          <select
+            class='form-select'
+            value={modalidade}
+            onChange={(event) =>
+              onModalidadeChange((event.target as HTMLSelectElement).value)
+            }
+          >
+            <option value=''>Todas</option>
+            {modalidades.map((value) => (
               <option key={value} value={value}>
                 {value}
               </option>

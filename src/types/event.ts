@@ -3,6 +3,7 @@ export type EventItem = {
   dateRaw: string;
   dateKey: string;
   turno: string;
+  modalidade: string;
   start: string;
   end: string;
   local: string;
