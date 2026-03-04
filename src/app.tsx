@@ -8,7 +8,7 @@ import { loadEvents, matchesFuzzySearch } from './utils/events.ts';
 
 const ALL_DAYS = '__all__';
 const EVENTS_CSV_URL =
-  'https://docs.google.com/spreadsheets/d/1kU9TPymZSGLc-WHDgRVMi8DQeVXLk4FYiBZ5feDWmMs/export?format=csv';
+  'https://docs.google.com/spreadsheets/d/1kU9TPymZSGLc-WHDgRVMi8DQeVXLk4FYiBZ5feDWmMs/export?format=csv&gid=129044375';
 
 const withSelectedValue = (values: string[], selectedValue: string) => {
   if (!selectedValue || values.includes(selectedValue)) {
