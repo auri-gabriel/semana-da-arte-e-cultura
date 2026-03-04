@@ -1,18 +1,10 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { AppFooter } from './components/layout/AppFooter.tsx';
-import { AppNavbar } from './components/layout/AppNavbar.tsx';
 import { EventDetailsPanel } from './components/schedule/EventDetailsPanel.tsx';
 import { EventsListPanel } from './components/schedule/EventsListPanel.tsx';
 import { FiltersPanel } from './components/schedule/FiltersPanel.tsx';
 import { WeekCalendar } from './components/schedule/WeekCalendar.tsx';
 import type { EventItem } from './types/event.ts';
-import type { ThemeMode } from './types/theme.ts';
 import { loadEvents, matchesFuzzySearch } from './utils/events.ts';
-import {
-  THEME_STORAGE_KEY,
-  getInitialThemeMode,
-  getSystemTheme,
-} from './utils/theme.ts';
 
 const ALL_DAYS = '__all__';
 
@@ -25,10 +17,6 @@ const withSelectedValue = (values: string[], selectedValue: string) => {
 };
 
 export function App() {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(
-    getSystemTheme,
-  );
   const [events, setEvents] = useState<EventItem[]>([]);
   const [selectedDay, setSelectedDay] = useState(ALL_DAYS);
   const [selectedEventId, setSelectedEventId] = useState('');
@@ -36,30 +24,6 @@ export function App() {
   const [turno, setTurno] = useState('');
   const [proponente, setProponente] = useState('');
   const [local, setLocal] = useState('');
-
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const onSystemThemeChange = (event: MediaQueryListEvent) => {
-      setSystemTheme(event.matches ? 'dark' : 'light');
-    };
-
-    media.addEventListener('change', onSystemThemeChange);
-    return () => {
-      media.removeEventListener('change', onSystemThemeChange);
-    };
-  }, []);
-
-  const effectiveTheme = themeMode === 'auto' ? systemTheme : themeMode;
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-bs-theme', effectiveTheme);
-  }, [effectiveTheme]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
-    } catch {}
-  }, [themeMode]);
 
   useEffect(() => {
     const load = async () => {
@@ -139,25 +103,9 @@ export function App() {
   const selectedEvent =
     filteredEvents.find((event) => event.id === selectedEventId) ??
     filteredEvents[0];
-  const navbarLogoFile =
-    effectiveTheme === 'dark'
-      ? 'RGB__SVG_assinat_horizontal_cor_NEGATIVO.svg'
-      : 'RGB__SVG_assinat_horizontal_cor.svg';
-  const footerLogoFile =
-    effectiveTheme === 'dark'
-      ? 'RGB__SVG_assinat_vertical_cor_NEGATIVO.svg'
-      : 'RGB__SVG_assinat_vertical_cor.svg';
-  const navbarLogoSrc = `${import.meta.env.BASE_URL}logos/${navbarLogoFile}`;
-  const footerLogoSrc = `${import.meta.env.BASE_URL}logos/${footerLogoFile}`;
 
   return (
     <div class='app-shell'>
-      <AppNavbar
-        themeMode={themeMode}
-        navbarLogoSrc={navbarLogoSrc}
-        onThemeModeChange={setThemeMode}
-      />
-
       <header class='border-bottom app-header'>
         <div class='container-fluid board-layout py-3'>
           <h1 class='h5 mb-1'>II Semana de Arte e Cultura de Alegrete</h1>
@@ -200,8 +148,6 @@ export function App() {
           </section>
         </div>
       </main>
-
-      <AppFooter footerLogoSrc={footerLogoSrc} />
     </div>
   );
 }
