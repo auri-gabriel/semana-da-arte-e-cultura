@@ -164,9 +164,19 @@ export function formatHour(value: string): string {
   return value?.slice(0, 5) ?? '';
 }
 
-export async function loadEvents(baseUrl: string): Promise<EventItem[]> {
-  const url = `${baseUrl}Programação-Oficinas.csv`;
-  const text = await fetch(url).then((response) => response.text());
+async function fetchCsvText(url: string): Promise<string> {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Falha ao buscar CSV (${response.status}) em ${url}`);
+  }
+
+  return response.text();
+}
+
+export async function loadEvents(remoteUrl: string): Promise<EventItem[]> {
+  const text = await fetchCsvText(remoteUrl);
+
   const rows = parseCsv(text);
   const [headers, ...body] = rows;
 

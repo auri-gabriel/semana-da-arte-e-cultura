@@ -7,6 +7,8 @@ import type { EventItem } from './types/event.ts';
 import { loadEvents, matchesFuzzySearch } from './utils/events.ts';
 
 const ALL_DAYS = '__all__';
+const EVENTS_CSV_URL =
+  'https://docs.google.com/spreadsheets/d/1YFds-uLG-KyqgGe79ZEPXHIsZeKg9GmCQ-O-G57e67M/export?format=csv';
 
 const withSelectedValue = (values: string[], selectedValue: string) => {
   if (!selectedValue || values.includes(selectedValue)) {
@@ -27,7 +29,7 @@ export function App() {
 
   useEffect(() => {
     const load = async () => {
-      const parsed = await loadEvents(import.meta.env.BASE_URL);
+      const parsed = await loadEvents(EVENTS_CSV_URL);
 
       setEvents(parsed);
     };
