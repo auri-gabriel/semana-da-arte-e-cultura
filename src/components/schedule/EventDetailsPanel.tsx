@@ -17,7 +17,7 @@ export function EventDetailsPanel({ event }: EventDetailsPanelProps) {
         <h2 class='h5 mb-1'>{event?.titulo ?? 'Selecione um evento'}</h2>
         {event ? (
           <p class='mb-0 text-body-secondary small'>
-            <i class='bi bi-calendar-date me-1' aria-hidden='true' />
+            <i class='bi bi-calendar me-1' aria-hidden='true' />
             {event.dateRaw} · {formatHour(event.start)}–{formatHour(event.end)}{' '}
             · {event.turno}
           </p>
