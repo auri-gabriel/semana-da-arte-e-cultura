@@ -157,6 +157,33 @@
   overflow: auto;
 }
 
+.event-details-content {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.event-details-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.1rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px dashed var(--bs-border-color);
+}
+
+.event-details-item:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.event-details-empty {
+  display: flex;
+  align-items: center;
+}
+
+.event-details-map-link {
+  width: fit-content;
+}
+
 @media (max-width: 1199.98px) {
   .events-list {
     max-height: 40vh;
@@ -194,5 +221,9 @@
 
   .brand-logo-footer {
     max-height: 96px;
+  }
+
+  .event-details-map-link {
+    width: 100%;
   }
 }
