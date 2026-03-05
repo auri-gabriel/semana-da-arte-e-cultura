@@ -31,6 +31,7 @@ export function App() {
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(
     getSystemTheme,
   );
+  const [isLoading, setIsLoading] = useState(true);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [selectedDay, setSelectedDay] = useState(ALL_DAYS);
   const [selectedEventId, setSelectedEventId] = useState('');
@@ -86,10 +87,14 @@ export function App() {
       setEvents(parsed);
     };
 
-    load().catch((error) => {
-      console.error('Erro ao carregar CSV de oficinas:', error);
-      setEvents([]);
-    });
+    load()
+      .catch((error) => {
+        console.error('Erro ao carregar CSV de oficinas:', error);
+        setEvents([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   const days = useMemo(
@@ -184,51 +189,68 @@ export function App() {
         onThemeModeChange={setThemeMode}
       />
 
-      <header class='border-bottom app-header'>
-        <div class='container-fluid board-layout py-3'>
-          <h1 class='h5 mb-1'>II Semana de Arte e Cultura de Alegrete</h1>
-          <p class='text-body-secondary mb-3'>Programação de Oficinas</p>
-          <WeekCalendar
-            days={days}
-            selectedDay={selectedDay}
-            onSelectDay={setSelectedDay}
-            allDaysValue={ALL_DAYS}
-          />
+      {isLoading ? (
+        <div class='container-fluid board-layout py-5'>
+          <div class='d-flex justify-content-center align-items-center py-5'>
+            <div
+              class='spinner-border text-primary'
+              role='status'
+              aria-live='polite'
+              aria-label='Carregando programação'
+            >
+              <span class='visually-hidden'>Carregando programação...</span>
+            </div>
+          </div>
         </div>
-      </header>
+      ) : (
+        <>
+          <header class='border-bottom app-header'>
+            <div class='container-fluid board-layout py-3'>
+              <h1 class='h5 mb-1'>II Semana de Arte e Cultura de Alegrete</h1>
+              <p class='text-body-secondary mb-3'>Programação de Oficinas</p>
+              <WeekCalendar
+                days={days}
+                selectedDay={selectedDay}
+                onSelectDay={setSelectedDay}
+                allDaysValue={ALL_DAYS}
+              />
+            </div>
+          </header>
 
-      <main class='container-fluid board-layout py-3'>
-        <div class='row g-3'>
-          <aside class='col-12 col-xl-4'>
-            <FiltersPanel
-              search={search}
-              turno={turno}
-              modalidade={modalidade}
-              proponente={proponente}
-              local={local}
-              turnos={turnos}
-              modalidades={modalidades}
-              proponentes={proponentes}
-              locais={locais}
-              onSearchChange={setSearch}
-              onTurnoChange={setTurno}
-              onModalidadeChange={setModalidade}
-              onProponenteChange={setProponente}
-              onLocalChange={setLocal}
-            />
-            <EventsListPanel
-              events={filteredEvents}
-              selectedEventId={selectedEvent?.id ?? ''}
-              showDate={selectedDay === ALL_DAYS}
-              onSelectEvent={setSelectedEventId}
-            />
-          </aside>
+          <main class='container-fluid board-layout py-3'>
+            <div class='row g-3'>
+              <aside class='col-12 col-xl-4'>
+                <FiltersPanel
+                  search={search}
+                  turno={turno}
+                  modalidade={modalidade}
+                  proponente={proponente}
+                  local={local}
+                  turnos={turnos}
+                  modalidades={modalidades}
+                  proponentes={proponentes}
+                  locais={locais}
+                  onSearchChange={setSearch}
+                  onTurnoChange={setTurno}
+                  onModalidadeChange={setModalidade}
+                  onProponenteChange={setProponente}
+                  onLocalChange={setLocal}
+                />
+                <EventsListPanel
+                  events={filteredEvents}
+                  selectedEventId={selectedEvent?.id ?? ''}
+                  showDate={selectedDay === ALL_DAYS}
+                  onSelectEvent={setSelectedEventId}
+                />
+              </aside>
 
-          <section class='col-12 col-xl-8'>
-            <EventDetailsPanel event={selectedEvent} />
-          </section>
-        </div>
-      </main>
+              <section class='col-12 col-xl-8'>
+                <EventDetailsPanel event={selectedEvent} />
+              </section>
+            </div>
+          </main>
+        </>
+      )}
 
       <AppFooter footerLogoSrc={footerLogoSrc} />
     </div>
