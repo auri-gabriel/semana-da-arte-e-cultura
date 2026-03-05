@@ -89,18 +89,6 @@ export function normalize(value: string): string {
     .trim();
 }
 
-function isSubsequence(needle: string, haystack: string): boolean {
-  if (!needle) return true;
-
-  let index = 0;
-  for (const char of haystack) {
-    if (char === needle[index]) index += 1;
-    if (index === needle.length) return true;
-  }
-
-  return false;
-}
-
 function levenshteinDistance(a: string, b: string): number {
   if (a === b) return 0;
   if (!a) return b.length;
@@ -134,12 +122,17 @@ function fuzzyMatchToken(token: string, value: string): boolean {
   if (!token) return true;
   if (!value) return false;
   if (value.includes(token)) return true;
-  if (isSubsequence(token, value)) return true;
 
   const words = value.split(/\s+/).filter(Boolean);
-  const maxDistance = token.length <= 4 ? 1 : 2;
+
+  if (token.length <= 4) {
+    return words.some((word) => word.startsWith(token));
+  }
+
+  const maxDistance = token.length >= 8 ? 2 : 1;
 
   return words.some((word) => {
+    if (word[0] !== token[0]) return false;
     if (Math.abs(word.length - token.length) > maxDistance) return false;
     return levenshteinDistance(token, word) <= maxDistance;
   });
