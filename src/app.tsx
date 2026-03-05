@@ -18,6 +18,9 @@ const ALL_DAYS = '__all__';
 const EVENTS_CSV_URL =
   'https://docs.google.com/spreadsheets/d/1kU9TPymZSGLc-WHDgRVMi8DQeVXLk4FYiBZ5feDWmMs/export?format=csv&gid=129044375';
 
+const logoUrl = (fileName: string) =>
+  `${import.meta.env.BASE_URL}logos/${fileName}`;
+
 const withSelectedValue = (values: string[], selectedValue: string) => {
   if (!selectedValue || values.includes(selectedValue)) {
     return values;
@@ -72,13 +75,13 @@ export function App() {
 
   const navbarLogoSrc =
     activeTheme === 'dark'
-      ? '/logos/RGB__SVG_assinat_horizontal_cor_NEGATIVO.svg'
-      : '/logos/RGB__SVG_assinat_horizontal_cor.svg';
+      ? logoUrl('RGB__SVG_assinat_horizontal_cor_NEGATIVO.svg')
+      : logoUrl('RGB__SVG_assinat_horizontal_cor.svg');
 
   const footerLogoSrc =
     activeTheme === 'dark'
-      ? '/logos/RGB__SVG_assinat_vertical_cor_NEGATIVO.svg'
-      : '/logos/RGB__SVG_assinat_vertical_cor.svg';
+      ? logoUrl('RGB__SVG_assinat_vertical_cor_NEGATIVO.svg')
+      : logoUrl('RGB__SVG_assinat_vertical_cor.svg');
 
   useEffect(() => {
     const load = async () => {
